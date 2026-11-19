@@ -1,0 +1,681 @@
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#07101e">
+
+    <meta name="description"
+          content="카메라로 빨간 표식을 추적해 스윙하는 야구 게임 REALITY SLUGGER">
+
+    <title>REALITY SLUGGER | 카메라 야구 게임</title>
+
+    <!-- 디자인 연결 -->
+    <link rel="stylesheet" href="style.css?v=4">
+
+    <!-- 카메라와 게임 코드 연결 -->
+    <script defer src="camera.js?v=4"></script>
+    <script defer src="game.js?v=4"></script>
+</head>
+
+<body>
+    <div class="page-shell">
+
+        <!-- 게임 상단 제목 -->
+        <header class="topbar">
+            <div class="brand">
+                <span class="brand-icon">⚾</span>
+                <div>
+                    <h1>REALITY <em>SLUGGER</em></h1>
+                    <p>카메라로 직접 스윙하는 야구 게임</p>
+                </div>
+            </div>
+
+            <div class="header-meta">
+                <span class="header-chip">
+                    WEEK 03 · FINAL
+                </span>
+                <span class="header-status">
+                    <span class="status-dot"></span>
+                    CAMERA BASEBALL GAME
+                </span>
+            </div>
+        </header>
+
+        <main class="game-layout">
+
+            <!-- 왼쪽: 경기 상황과 기록 -->
+            <aside class="left-column"
+                   aria-label="경기 기록">
+
+                <!-- 아웃, 스트라이크, 볼 -->
+                <section class="panel count-panel">
+                    <p class="section-kicker">
+                        GAME COUNT
+                    </p>
+
+                    <h2>경기 상황</h2>
+
+                    <div class="count-row">
+                        <span>OUT</span>
+
+                        <div class="lamps"
+                             aria-label="아웃 카운트">
+                            <i class="lamp lamp-red"></i>
+                            <i class="lamp lamp-red"></i>
+                            <i class="lamp lamp-red"></i>
+                        </div>
+                    </div>
+
+                    <div class="count-row">
+                        <span>STRIKE</span>
+
+                        <div class="lamps"
+                             aria-label="스트라이크 카운트">
+                            <i class="lamp lamp-orange"></i>
+                            <i class="lamp lamp-orange"></i>
+                        </div>
+                    </div>
+
+                    <div class="count-row">
+                        <span>BALL</span>
+
+                        <div class="lamps"
+                             aria-label="볼 카운트">
+                            <i class="lamp lamp-green"></i>
+                            <i class="lamp lamp-green"></i>
+                            <i class="lamp lamp-green"></i>
+                            <i class="lamp lamp-green"></i>
+                        </div>
+                    </div>
+
+                    <p class="small-note">
+                        총 10번의 투구로 진행하는
+                        홈런 더비입니다.
+                    </p>
+                </section>
+
+                <!-- 경기 기록 -->
+                <section class="panel record-panel">
+                    <p class="section-kicker">
+                        PLAYER STATS
+                    </p>
+
+                    <h2>나의 기록</h2>
+
+                    <div class="record-row">
+                        <span>총 점수</span>
+                        <strong id="score">0</strong>
+                    </div>
+
+                    <div class="record-row">
+                        <span>홈런</span>
+                        <strong id="homeruns">0</strong>
+                    </div>
+
+                    <div class="record-row">
+                        <span>안타</span>
+                        <strong id="hits">0</strong>
+                    </div>
+
+                    <div class="record-row">
+                        <span>최고 비거리</span>
+                        <strong id="maxDistance">0m</strong>
+                    </div>
+
+                    <div class="record-row">
+                        <span>투구 수</span>
+                        <strong id="pitchCount">0 / 10</strong>
+                    </div>
+                </section>
+
+                <!-- 플레이 방법 -->
+                <section class="howto-panel">
+                    <p class="section-kicker">
+                        HOW TO PLAY
+                    </p>
+
+                    <strong>실제로 스윙하세요!</strong>
+
+                    <p>
+                        카메라를 연결하고 빨간색 표식을
+                        보여주세요. 투구 시작을 누른 후
+                        공이 다가올 때 표식을 좌우로
+                        빠르게 휘두르면 됩니다.
+
+                        카메라가 없어도 스윙 테스트
+                        버튼으로 플레이할 수 있어요.
+                    </p>
+                </section>
+            </aside>
+
+            <!-- 가운데: 야구장 -->
+            <section class="center-column"
+                     aria-label="야구 게임 화면">
+
+                <!-- 야구장 상단 표시 -->
+                <div class="field-topline">
+                    <span class="live-flag">
+                        <span class="pulse-dot"></span>
+                        LIVE STADIUM
+                    </span>
+
+                    <span class="field-tag">
+                        HOME RUN DERBY · 10 PITCHES
+                    </span>
+                </div>
+
+                <!-- 실제 야구장 -->
+                <div class="game-field" id="gameField">
+
+                    <!-- 배경 -->
+                    <div class="stadium-sky"></div>
+                    <div class="stadium-crowd"></div>
+                    <div class="stadium-fence"></div>
+
+                    <div class="stadium-light stadium-light-left"></div>
+                    <div class="stadium-light stadium-light-right"></div>
+
+                    <div class="field-grid"></div>
+
+                    <!-- 투구 정보 -->
+                    <div class="pitch-hud hidden"
+                         id="pitchHud">
+
+                        <span id="roundNumber">
+                            1 / 10
+                        </span>
+
+                        <span id="pitchName">
+                            직구
+                        </span>
+
+                        <strong id="pitchSpeed">
+                            145 km/h
+                        </strong>
+                    </div>
+
+                    <!-- 투수 캐릭터 -->
+                    <div class="pitcher" id="pitcher">
+
+                        <svg viewBox="0 0 100 130"
+                             width="90"
+                             height="115"
+                             role="img"
+                             aria-label="투수">
+
+                            <!-- 모자 -->
+                            <path d="M28 20 Q50 0 72 20 L78 27 L24 27 Z"
+                                  fill="#244d91" />
+
+                            <ellipse cx="50" cy="28"
+                                     rx="26" ry="7"
+                                     fill="#173970" />
+
+                            <!-- 얼굴 -->
+                            <circle cx="50" cy="40" r="19"
+                                    fill="#eec39e" />
+
+                            <!-- 유니폼 -->
+                            <path d="M32 57 L68 57 L79 95 L21 95 Z"
+                                  fill="#f4f5f2"
+                                  stroke="#294770"
+                                  stroke-width="3" />
+
+                            <path d="M50 57 L50 94"
+                                  stroke="#284b83"
+                                  stroke-width="3" />
+
+                            <!-- 왼팔 -->
+                            <path d="M32 66 L14 81"
+                                  stroke="#eec39e"
+                                  stroke-width="11"
+                                  stroke-linecap="round" />
+
+                            <!-- 오른팔 -->
+                            <path d="M68 66 L82 51"
+                                  stroke="#eec39e"
+                                  stroke-width="11"
+                                  stroke-linecap="round" />
+
+                            <!-- 글러브 -->
+                            <ellipse cx="82" cy="48"
+                                     rx="12" ry="15"
+                                     fill="#95562e" />
+
+                            <!-- 다리 -->
+                            <path d="M37 96 L32 121 M63 96 L68 121"
+                                  stroke="#e9edf4"
+                                  stroke-width="14"
+                                  stroke-linecap="round" />
+
+                            <!-- 신발 -->
+                            <path d="M21 123 L38 123 M62 123 L79 123"
+                                  stroke="#142238"
+                                  stroke-width="10"
+                                  stroke-linecap="round" />
+                        </svg>
+
+                        <span>투수</span>
+                    </div>
+
+                    <!-- 스트라이크존 및 야구공 -->
+                    <div class="field-center">
+                        <div class="strike-zone-wrap">
+
+                            <div id="strikeZone"
+                                 class="strike-zone">
+
+                                <!-- 스트라이크존 3×3 -->
+                                <span class="zone-cell"></span>
+                                <span class="zone-cell"></span>
+                                <span class="zone-cell"></span>
+
+                                <span class="zone-cell"></span>
+                                <span class="zone-cell"></span>
+                                <span class="zone-cell"></span>
+
+                                <span class="zone-cell"></span>
+                                <span class="zone-cell"></span>
+                                <span class="zone-cell"></span>
+
+                                <!-- 날아오는 야구공 -->
+                                <div id="baseball"
+                                     class="baseball hidden">
+
+                                    <span class="seam seam-a"></span>
+                                    <span class="seam seam-b"></span>
+
+                                </div>
+                            </div>
+
+                            <span class="zone-label">
+                                STRIKE ZONE
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- 타자 캐릭터 -->
+                    <div id="batterAvatar"
+                         class="game-batter hidden">
+
+                        <svg viewBox="0 0 120 175"
+                             width="120"
+                             height="175"
+                             role="img"
+                             aria-label="타자">
+
+                            <!-- 배트 -->
+                            <g id="batSwing">
+                                <path d="M75 76 L108 16"
+                                      stroke="#ba8047"
+                                      stroke-width="12"
+                                      stroke-linecap="round" />
+
+                                <path d="M106 19 L112 8"
+                                      stroke="#e1af6c"
+                                      stroke-width="15"
+                                      stroke-linecap="round" />
+                            </g>
+
+                            <!-- 헬멧 -->
+                            <path d="M35 39 Q35 4 65 10 Q94 12 91 40 Z"
+                                  fill="#193c74" />
+
+                            <ellipse cx="65" cy="39"
+                                     rx="31" ry="8"
+                                     fill="#102e60" />
+
+                            <!-- 얼굴 -->
+                            <circle cx="63" cy="46"
+                                    r="22"
+                                    fill="#e8b88e" />
+
+                            <!-- 몸 -->
+                            <path d="M44 68 L82 68 L91 116 L36 116 Z"
+                                  fill="#edf1f6"
+                                  stroke="#254c84"
+                                  stroke-width="3" />
+
+                            <!-- 팔 -->
+                            <path d="M82 79 L98 87 L86 98"
+                                  fill="none"
+                                  stroke="#e8b88e"
+                                  stroke-width="13"
+                                  stroke-linecap="round" />
+
+                            <!-- 다리 -->
+                            <path d="M49 116 L37 158 M77 116 L89 158"
+                                  stroke="#e6e9ef"
+                                  stroke-width="17"
+                                  stroke-linecap="round" />
+
+                            <!-- 신발 -->
+                            <path d="M23 163 L42 163 M83 163 L103 163"
+                                  stroke="#19263c"
+                                  stroke-width="11"
+                                  stroke-linecap="round" />
+                        </svg>
+                    </div>
+
+                    <!-- 타격 충격 효과 -->
+                    <div id="impactEffect"
+                         class="impact-effect hidden">
+                    </div>
+
+                    <!-- 타격 후 공 비행 -->
+                    <div id="ballFlight"
+                         class="ball-flight hidden">
+
+                        <div id="flightTrail"
+                             class="flight-trail"></div>
+
+                        <div id="flightBall"
+                             class="flight-ball">
+                            ⚾
+                        </div>
+                    </div>
+
+                    <!-- 비거리 -->
+                    <div id="flightDistance"
+                         class="flight-distance hidden">
+                        0m
+                    </div>
+
+                    <!-- 파티클 -->
+                    <div id="hitParticles"
+                         class="hit-particles hidden">
+                    </div>
+
+                    <!-- 타격 화면 효과 -->
+                    <div id="fieldFlash"
+                         class="field-flash">
+                    </div>
+
+                    <!-- 타격 메시지 -->
+                    <div id="fieldMessage"
+                         class="field-message">
+                    </div>
+
+                    <!-- 홈런 축하 -->
+                    <div id="homeRunBanner"
+                         class="home-run-banner hidden">
+
+                        <span class="home-run-small">
+                            REALITY SLUGGER
+                        </span>
+
+                        <strong>HOME RUN!</strong>
+
+                        <span class="home-run-caption">
+                            PERFECT SWING
+                        </span>
+                    </div>
+
+                    <!-- 내야 -->
+                    <div class="homeplate"></div>
+                    <div class="field-ground"></div>
+
+                </div>
+
+                <!-- 타격 결과창 -->
+                <div class="result-strip"
+                     aria-live="polite">
+
+                    <div>
+                        <p class="section-kicker">
+                            BATTING RESULT
+                        </p>
+
+                        <h2 id="resultText">
+                            READY
+                        </h2>
+                    </div>
+
+                    <p id="resultDetail">
+                        카메라를 연결하고 투구를 시작하세요.
+                    </p>
+                </div>
+            </section>
+
+            <!-- 오른쪽: 게임 설정과 카메라 -->
+            <aside class="right-column"
+                   aria-label="게임 설정과 카메라">
+
+                <!-- 게임 설정 -->
+                <section class="panel settings-panel">
+
+                    <p class="section-kicker">
+                        GAME SETTINGS
+                    </p>
+
+                    <h2>게임 설정</h2>
+
+                    <!-- 난이도 -->
+                    <label for="difficulty">
+                        난이도
+                    </label>
+
+                    <select id="difficulty">
+                        <option value="easy">
+                            쉬움
+                        </option>
+
+                        <option value="normal" selected>
+                            보통
+                        </option>
+
+                        <option value="hard">
+                            어려움
+                        </option>
+                    </select>
+
+                    <!-- 구종 -->
+                    <label for="pitchType">
+                        투구 종류
+                    </label>
+
+                    <select id="pitchType">
+                        <option value="fast">
+                            직구
+                        </option>
+
+                        <option value="slider">
+                            슬라이더
+                        </option>
+
+                        <option value="change">
+                            체인지업
+                        </option>
+                    </select>
+
+                    <p class="small-note">
+                        난이도와 구종에 따라
+                        공의 속도와 타격 판정이 달라집니다.
+                    </p>
+                </section>
+
+                <!-- 웹캠 -->
+                <section class="panel webcam-panel">
+
+                    <div class="camera-head">
+                        <div>
+                            <p class="section-kicker">
+                                MOTION TRACKING
+                            </p>
+
+                            <h2>실시간 카메라</h2>
+                        </div>
+
+                        <span id="cameraIndicator"
+                              class="camera-indicator">
+                            OFF
+                        </span>
+                    </div>
+
+                    <!-- 카메라 영상 영역 -->
+                    <div class="video-frame">
+
+                        <video id="cameraFeed"
+                               autoplay
+                               playsinline
+                               muted>
+                        </video>
+
+                        <!-- 빨간색 위치 표시 -->
+                        <div id="trackingMarker"
+                             class="tracking-marker hidden">
+                        </div>
+
+                        <div id="trackingLabel"
+                             class="tracking-label">
+                            RED TARGET · NOT FOUND
+                        </div>
+
+                        <!-- 카메라 꺼짐 표시 -->
+                        <div id="cameraPlaceholder"
+                             class="camera-placeholder">
+
+                            <strong>CAMERA OFF</strong>
+
+                            <span>
+                                카메라 연결 버튼을 눌러주세요.
+                            </span>
+                        </div>
+
+                        <!-- 영상 모서리 장식 -->
+                        <div class="camera-corner top-left"></div>
+                        <div class="camera-corner top-right"></div>
+                        <div class="camera-corner bottom-left"></div>
+                        <div class="camera-corner bottom-right"></div>
+
+                    </div>
+
+                    <!-- 카메라 연결 상태 -->
+                    <p id="cameraStatus"
+                       class="camera-status">
+                        카메라 연결 대기 중
+                    </p>
+
+                    <!-- 스윙 게이지 -->
+                    <div class="tracking-bar">
+                        <span id="trackingBar"
+                              style="width:0%">
+                        </span>
+                    </div>
+
+                    <div id="trackingStatus"
+                         class="tracking-status">
+                        빨간색 표식을 보여주세요.
+                    </div>
+
+                    <!-- 카메라 방향 -->
+                    <label for="cameraFacing"
+                           class="sensitivity-label">
+                        카메라 방향
+                    </label>
+
+                    <select id="cameraFacing"
+                            class="sensitivity-select">
+
+                        <option value="user" selected>
+                            전면 카메라 (노트북·셀카)
+                        </option>
+
+                        <option value="environment">
+                            후면 카메라 (스마트폰)
+                        </option>
+                    </select>
+
+                    <p class="small-note">
+                        카메라가 켜진 상태에서 방향을
+                        바꾸면 자동으로 다시 연결됩니다.
+                        기기에 따라 선택 가능한 카메라가
+                        다를 수 있습니다.
+                    </p>
+
+                    <!-- 카메라 연결 버튼 -->
+                    <button id="cameraButton"
+                            class="btn btn-camera"
+                            type="button">
+                        카메라 연결
+                    </button>
+
+                    <!-- 스윙 감도 -->
+                    <label for="sensitivity"
+                           class="sensitivity-label">
+                        스윙 인식 감도
+                    </label>
+
+                    <select id="sensitivity"
+                            class="sensitivity-select">
+
+                        <option value="high">
+                            높음 (가벼운 스윙)
+                        </option>
+
+                        <option value="normal" selected>
+                            보통 (추천)
+                        </option>
+
+                        <option value="low">
+                            낮음 (빠른 스윙만)
+                        </option>
+                    </select>
+
+                    <p class="camera-warning">
+                        안전한 공간에서 실제 배트 대신
+                        가벼운 막대로 먼저 테스트하세요.
+                    </p>
+
+                </section>
+            </aside>
+        </main>
+
+        <!-- 하단 게임 조작 -->
+        <footer class="controls">
+
+            <div class="controls-info">
+                <strong>GAME CONTROLS</strong>
+
+                <span>
+                    빨간 표식을 휘두르거나
+                    스윙 테스트 버튼을 누르세요.
+                </span>
+            </div>
+
+            <div class="control-buttons">
+
+                <!-- 투구 시작 -->
+                <button id="pitchButton"
+                        class="btn btn-primary"
+                        type="button">
+                    ⚾ 투구 시작
+                </button>
+
+                <!-- 스윙 테스트 -->
+                <button id="swingButton"
+                        class="btn btn-outline"
+                        type="button">
+                    스윙 테스트
+                </button>
+
+                <!-- 게임 초기화 -->
+                <button id="resetButton"
+                        class="btn btn-ghost"
+                        type="button">
+                    게임 초기화
+                </button>
+            </div>
+        </footer>
+
+        <p class="footer-note">
+            REALITY SLUGGER · CAMERA MOTION BASEBALL GAME · WEEK 03
+        </p>
+
+    </div>
+</body>
+</html>
